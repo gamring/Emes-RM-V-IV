@@ -384,7 +384,6 @@
         });
       }
 
-      // Delegación de eventos para botones + y - (100% compatible con todos los navegadores)
       itemsContainer.addEventListener('click', function(e) {
         const btn = e.target.closest('.qty-btn');
         if (!btn) return;
@@ -553,7 +552,8 @@
           pesoTotal: pesoTotal.toFixed(0),
           totalUnidades: totalUnidades + bultos,
           listaTexto,
-          dimManual: bultos > 0 ? `${bultos} bulto(s) de ${largo}x${ancho}x${alto}cm` : ""
+          bultosManual: bultos,
+          dimManual: bultos > 0 ? `${bultos}x Bulto adicional (${largo}x${ancho}x${alto} cm, ${peso} kg c/u)` : ""
         };
       }
 
@@ -612,10 +612,19 @@
         const valorDeclarado = parseInt(document.getElementById('valorDeclarado').value || 0).toLocaleString('es-CL');
         const documento = document.getElementById('documento').value;
 
-        const detalleItems = [
-          metrics.listaTexto.length > 0 ? metrics.listaTexto.join(", ") : "",
-          metrics.dimManual ? `Adicional: ${metrics.dimManual}` : ""
-        ].filter(Boolean).join(" | ");
+        // Construir lista enumerada línea por línea (1. Cant x Artículo)
+        const lineasInventario = [...metrics.listaTexto];
+        if (metrics.dimManual) {
+          lineasInventario.push(metrics.dimManual);
+        }
+
+        const inventarioEnumeradoWhatsApp = lineasInventario
+          .map((linea, index) => `${index + 1}. ${linea}`)
+          .join("\n");
+
+        const inventarioEnumeradoSheets = lineasInventario
+          .map((linea, index) => `${index + 1}. ${linea}`)
+          .join(" | ");
 
         const payload = {
           id: idSolicitud,
@@ -625,7 +634,7 @@
           servicio: `${servicio} | Retiro: ${fechaRetiro} / Recepción: ${fechaRecepcion}`,
           tipoCarga: categoriaPrincipal,
           bultos: metrics.totalUnidades,
-          dimensiones: detalleItems,
+          dimensiones: inventarioEnumeradoSheets,
           volumen: metrics.volTotal,
           pesoTotal: metrics.pesoTotal,
           maniobra,
@@ -646,7 +655,10 @@
 🚚 *MODALIDAD:* ${entrega} | ${servicio}
 📅 *FECHA EST. RETIRO:* ${fechaRetiro}
 🏁 *FECHA EST. RECEPCIÓN:* ${fechaRecepcion}
-📦 *INVENTARIO:* ${detalleItems}
+
+📦 *INVENTARIO ENUMERADO:*
+${inventarioEnumeradoWhatsApp}
+
 📐 *CUBICACIÓN TOTAL:* *${metrics.volTotal} m³* | *${metrics.pesoTotal} kg* (${metrics.totalUnidades} unid.)
 🏗️ *MANIOBRA:* ${maniobra}
 🛡️ *RESPALDO:* Valor declarado $${valorDeclarado} | ${documento}
