@@ -30,8 +30,13 @@
     }
 
     label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #334155; }
-    select, input[type="number"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff; color: #0f172a; }
+    select, input[type="number"], input[type="date"], input[type="tel"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff; color: #0f172a; }
     select:focus, input:focus { outline: none; border-color: #0f172a; }
+
+    /* Phone Input Group */
+    .phone-wrap { display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #fff; }
+    .phone-prefix { background: #f1f5f9; padding: 10px 12px; font-size: 14px; font-weight: 700; color: #475569; border-right: 1px solid #cbd5e1; }
+    .phone-wrap input { border: none; border-radius: 0; }
 
     /* Radio Cards */
     .radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -95,6 +100,7 @@
       box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
     }
     .btn-whatsapp:hover { background-color: #15803d; }
+    .btn-whatsapp:disabled { background-color: #94a3b8; cursor: not-allowed; box-shadow: none; }
 
     .sticky-footer {
       position: fixed;
@@ -123,9 +129,18 @@
     </header>
 
     <form id="quoteForm">
-      <!-- 1. RUTA -->
+      <!-- 1. CONTACTO Y RUTA -->
       <div class="section">
-        <div class="section-title">1. Origen y Destino (Todas las Comunas)</div>
+        <div class="section-title">1. Contacto, Origen y Destino</div>
+        
+        <div style="margin-bottom: 12px;">
+          <label for="telefonoCliente">Tu número de WhatsApp / Teléfono (para enviarte la cotización)</label>
+          <div class="phone-wrap">
+            <span class="phone-prefix">+56 9</span>
+            <input type="tel" id="telefonoCliente" placeholder="Ej: 87654321" pattern="[0-9]{8}" maxlength="8" inputmode="numeric" required>
+          </div>
+        </div>
+
         <div class="grid-2" style="margin-bottom: 12px;">
           <div>
             <label for="origen">Comuna de Origen (Retiro)</label>
@@ -269,9 +284,9 @@
         </ul>
       </div>
 
-      <button type="submit" class="btn-whatsapp">
+      <button type="submit" id="mainSubmitBtn" class="btn-whatsapp">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
-        Solicitar Valor por WhatsApp
+        <span>Solicitar Valor por WhatsApp</span>
       </button>
     </form>
   </div>
@@ -281,14 +296,14 @@
     <div class="sticky-inner">
       <button type="button" id="stickySubmitBtn" class="btn-whatsapp" style="padding: 13px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
-        Enviar Cotización por WhatsApp
+        <span>Enviar Cotización por WhatsApp</span>
       </button>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const WHATSAPP_NUMBER = "56961568942";
+      const WHATSAPP_NUMBER = "56999502795";
       const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzSop5iOJ0A1XovJZd84w8QR7RNWJt2dQkaQMJvjTHQ7PpXaEGQ2ZXsVXYQvCrq-J4/exec";
 
       const CATALOGO = {
@@ -427,6 +442,12 @@
         calcMetrics();
       });
 
+      // Solo permitir dígitos en teléfono
+      const telInput = document.getElementById('telefonoCliente');
+      telInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 8);
+      });
+
       // COMUNAS POR REGIÓN
       const COMUNAS_POR_REGION = {
         "Región Metropolitana (RM)": [
@@ -557,7 +578,7 @@
         };
       }
 
-      // Inicializar fechas (hoy y mañana por defecto)
+      // Inicializar fechas
       const fechaRetiroInput = document.getElementById('fechaRetiro');
       const fechaRecepcionInput = document.getElementById('fechaRecepcion');
       const today = new Date();
@@ -582,13 +603,24 @@
       populateComunas();
       renderCategoryItems();
 
-      document.getElementById('stickySubmitBtn').addEventListener('click', function() {
+      const mainBtn = document.getElementById('mainSubmitBtn');
+      const stickyBtn = document.getElementById('stickySubmitBtn');
+
+      stickyBtn.addEventListener('click', function() {
         document.getElementById('quoteForm').requestSubmit();
       });
 
-      document.getElementById('quoteForm').addEventListener('submit', function(e) {
+      document.getElementById('quoteForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
+        const rawTel = telInput.value.trim();
+        if (rawTel.length !== 8) {
+          alert("Ingresa los 8 dígitos de tu número celular (ej: 87654321).");
+          telInput.focus();
+          return;
+        }
+        const telefonoCompleto = `+56 9 ${rawTel.slice(0, 4)} ${rawTel.slice(4)}`;
+
         const origen = document.getElementById('origen').value;
         const destino = document.getElementById('destino').value;
         if (origen === destino) {
@@ -602,7 +634,11 @@
           return;
         }
 
-        const idSolicitud = "SOL-" + Math.floor(1000 + Math.random() * 9000);
+        mainBtn.disabled = true;
+        stickyBtn.disabled = true;
+        mainBtn.querySelector('span').textContent = "Registrando solicitud...";
+        stickyBtn.querySelector('span').textContent = "Registrando solicitud...";
+
         const entrega = document.querySelector('input[name="entrega"]:checked').value;
         const servicio = document.querySelector('input[name="servicio"]:checked').value;
         const fechaRetiro = fechaRetiroInput.value;
@@ -612,7 +648,6 @@
         const valorDeclarado = parseInt(document.getElementById('valorDeclarado').value || 0).toLocaleString('es-CL');
         const documento = document.getElementById('documento').value;
 
-        // Lista enumerada línea por línea (1. Cant x Artículo)
         const lineasInventario = [...metrics.listaTexto];
         if (metrics.dimManual) {
           lineasInventario.push(metrics.dimManual);
@@ -627,7 +662,7 @@
           .join(" | ");
 
         const payload = {
-          id: idSolicitud,
+          telefono: telefonoCompleto,
           origen,
           destino,
           entrega,
@@ -641,16 +676,25 @@
           docSeguro: `${documento} | Seguro: $${valorDeclarado}`
         };
 
-        fetch(GOOGLE_SHEETS_URL, {
-          method: "POST",
-          mode: "no-cors",
-          keepalive: true,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }).catch(err => console.error(err));
+        // Obtener el ID correlativo real desde Google Sheets (sin mode: no-cors para leer la respuesta)
+        let idCorrelativo = "SOL-" + Math.floor(1000 + Math.random() * 9000);
+        try {
+          const response = await fetch(GOOGLE_SHEETS_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
+          if (result && result.status === "ok" && result.id) {
+            idCorrelativo = result.id;
+          }
+        } catch (err) {
+          console.error("Error obteniendo correlativo:", err);
+        }
 
-        const mensaje = `Hola, solicito cotización de flete (*#${idSolicitud}*):
+        const mensaje = `Hola, solicito cotización de flete (*#${idCorrelativo}*):
 
+📱 *TELÉFONO CLIENTE:* ${telefonoCompleto}
 📍 *RUTA:* ${origen} ➔ ${destino}
 🚚 *MODALIDAD:* ${entrega} | ${servicio}
 📅 *FECHA EST. RETIRO:* ${fechaRetiro}
@@ -664,6 +708,11 @@ ${inventarioEnumeradoWhatsApp}
 🛡️ *RESPALDO:* Valor declarado $${valorDeclarado} | ${documento}
 
 ¿Cuál sería el valor del traslado y disponibilidad para esas fechas?`;
+
+        mainBtn.disabled = false;
+        stickyBtn.disabled = false;
+        mainBtn.querySelector('span').textContent = "Solicitar Valor por WhatsApp";
+        stickyBtn.querySelector('span').textContent = "Enviar Cotización por WhatsApp";
 
         const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
         window.location.href = whatsappUrl;
