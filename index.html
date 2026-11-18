@@ -42,10 +42,10 @@
     .radio-card.green input:checked + .radio-box { background: #047857; border-color: #047857; }
 
     /* Lista Dinámica con Contadores */
-    .category-banner { background: #e2e8f0; color: #0f172a; font-size: 12px; font-weight: 800; padding: 7px 12px; border-radius: 8px 8px 0 0; border: 1px solid #cbd5e1; border-bottom: none; }
-    .items-list { border: 1px solid #cbd5e1; border-radius: 0 0 10px 10px; background: #f8fafc; padding: 10px; max-height: 310px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+    .category-banner { background: #e2e8f0; color: #0f172a; font-size: 12px; font-weight: 800; padding: 8px 12px; border-radius: 8px 8px 0 0; border: 1px solid #cbd5e1; border-bottom: none; }
+    .items-list { border: 1px solid #cbd5e1; border-radius: 0 0 10px 10px; background: #f8fafc; padding: 10px; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
     .item-row { display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; transition: border-color 0.15s; }
-    .item-row.active { border-color: #0f172a; background: #f0fdf4; }
+    .item-row.active { border-color: #047857; background: #f0fdf4; }
     .item-info { flex: 1; padding-right: 8px; }
     .item-name { font-size: 13px; font-weight: 600; color: #0f172a; }
     .item-specs { font-size: 11px; color: #64748b; }
@@ -165,7 +165,7 @@
           </select>
         </div>
 
-        <div class="category-banner" id="categoryBanner">Mostrando: 1. Muebles y Dormitorio</div>
+        <div class="category-banner" id="categoryBanner">Rubro activo: 1. Muebles y Dormitorio</div>
         <div class="items-list" id="itemsContainer"></div>
 
         <!-- Resumen acumulado de todas las categorías -->
@@ -612,7 +612,7 @@
         const valorDeclarado = parseInt(document.getElementById('valorDeclarado').value || 0).toLocaleString('es-CL');
         const documento = document.getElementById('documento').value;
 
-        // Construir lista enumerada línea por línea (1. Cant x Artículo)
+        // Lista enumerada línea por línea (1. Cant x Artículo)
         const lineasInventario = [...metrics.listaTexto];
         if (metrics.dimManual) {
           lineasInventario.push(metrics.dimManual);
