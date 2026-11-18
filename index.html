@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f1f5f9; color: #1e293b; line-height: 1.4; padding-bottom: 95px; }
-    .container { max-width: 600px; margin: 0 auto; background: #ffffff; min-height: 100vh; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .container { max-width: 620px; margin: 0 auto; background: #ffffff; min-height: 100vh; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     
     /* Header */
     header { background: #0f172a; color: #ffffff; padding: 20px; }
@@ -41,12 +41,29 @@
     .radio-card input:checked + .radio-box { background: #0f172a; color: #fff; border-color: #0f172a; }
     .radio-card.green input:checked + .radio-box { background: #047857; border-color: #047857; }
 
-    /* Inventario Hogar Checklist */
-    .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 270px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #f8fafc; margin-bottom: 12px; }
-    @media (max-width: 480px) { .checklist-grid { grid-template-columns: 1fr; } }
-    .check-item { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e2e8f0; padding: 7px 9px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 500; }
-    .check-item:hover { border-color: #94a3b8; }
-    .check-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: #0f172a; cursor: pointer; flex-shrink: 0; }
+    /* Lista Dinámica con Contadores */
+    .category-banner { background: #e2e8f0; color: #0f172a; font-size: 12px; font-weight: 800; padding: 7px 12px; border-radius: 8px 8px 0 0; border: 1px solid #cbd5e1; border-bottom: none; }
+    .items-list { border: 1px solid #cbd5e1; border-radius: 0 0 10px 10px; background: #f8fafc; padding: 10px; max-height: 310px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+    .item-row { display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; transition: border-color 0.15s; }
+    .item-row.active { border-color: #0f172a; background: #f0fdf4; }
+    .item-info { flex: 1; padding-right: 8px; }
+    .item-name { font-size: 13px; font-weight: 600; color: #0f172a; }
+    .item-specs { font-size: 11px; color: #64748b; }
+
+    /* Botones + / - */
+    .qty-controls { display: flex; align-items: center; gap: 6px; }
+    .qty-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; font-size: 17px; font-weight: 800; color: #0f172a; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; }
+    .qty-btn:hover { background: #e2e8f0; }
+    .qty-btn.plus { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+    .qty-btn.plus:hover { background: #334155; }
+    .qty-val { min-width: 24px; text-align: center; font-size: 14px; font-weight: 800; color: #0f172a; }
+
+    /* Resumen Seleccionados */
+    .selected-summary { background: #f8fafc; border: 1px dashed #94a3b8; border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 12px; display: none; }
+    .selected-summary.visible { display: block; }
+    .selected-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .tag-item { background: #0f172a; color: #fff; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 5px; display: inline-flex; align-items: center; gap: 6px; }
+    .tag-remove { cursor: pointer; color: #fca5a5; font-weight: 800; font-size: 13px; }
 
     /* Cubicación Box */
     .calc-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 13px; }
@@ -54,7 +71,7 @@
 
     /* Fecha Box */
     .date-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-top: 10px; }
-    .date-hint { font-size: 11px; color: #047857; font-weight: 600; margin-top: 4px; }
+    .date-hint { font-size: 11px; color: #047857; font-weight: 600; margin-top: 8px; }
 
     /* Garantías */
     .info-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; font-size: 12px; color: #78350f; margin-bottom: 16px; }
@@ -90,7 +107,7 @@
       box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
       z-index: 999;
     }
-    .sticky-inner { max-width: 600px; margin: 0 auto; }
+    .sticky-inner { max-width: 620px; margin: 0 auto; }
   </style>
 </head>
 <body>
@@ -102,7 +119,7 @@
         <span class="badge-route">RM • V Valparaíso • VI O'Higgins • IV Coquimbo</span>
       </div>
       <h1>Solicita tu Cotización de Flete</h1>
-      <p>Selecciona tus comunas, marca lo que trasladas y recibe tu tarifa por WhatsApp.</p>
+      <p>Elige categoría, ajusta cantidades de cada artículo y recibe el valor por WhatsApp.</p>
     </header>
 
     <form id="quoteForm">
@@ -133,92 +150,90 @@
         </div>
       </div>
 
-      <!-- 2. CATEGORÍA Y LISTADO ENUMERADO DE HOGAR / CARGA -->
+      <!-- 2. CATEGORÍA Y LISTADO DINÁMICO CON CANTIDADES -->
       <div class="section">
-        <div class="section-title">2. Categoría y Artículos a Trasladar</div>
+        <div class="section-title">2. Selección por Categoría y Cantidades</div>
         
         <div style="margin-bottom: 12px;">
-          <label for="tipoCarga">Categoría principal del traslado</label>
-          <select id="tipoCarga">
-            <option value="1. Mudanza / Artículos de Hogar">1. Mudanza / Artículos de Hogar</option>
-            <option value="2. Línea Blanca y Electrodomésticos">2. Línea Blanca y Electrodomésticos</option>
-            <option value="3. Encomiendas / Cajas / Bultos sueltos">3. Encomiendas / Cajas / Bultos sueltos</option>
-            <option value="4. Carga Paletizada / Comercio">4. Carga Paletizada / Comercio</option>
-            <option value="5. Maquinaria / Repuestos / Vehículos menores">5. Maquinaria / Repuestos / Vehículos menores</option>
+          <label for="categoriaSelect">Selecciona una categoría (puedes combinar varias):</label>
+          <select id="categoriaSelect">
+            <option value="hogar">1. Muebles y Dormitorio (Camas, Sofás, Comedor)</option>
+            <option value="lineablanca">2. Línea Blanca y Electrodomésticos</option>
+            <option value="cajas">3. Cajas, Bolsas y Encomiendas</option>
+            <option value="comercial">4. Carga Comercial, Pallets y Construcción</option>
+            <option value="vehiculos">5. Bicicletas, Motos y Maquinaria</option>
           </select>
         </div>
 
-        <label>Selecciona artículos del hogar o carga (suma automática de volumen y peso):</label>
-        <div class="checklist-grid" id="itemsChecklist">
-          <label class="check-item"><input type="checkbox" data-name="Refrigerador" data-vol="0.85" data-kg="75" onchange="calcMetrics()"> <span>1. Refrigerador</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Lavadora / Secadora" data-vol="0.45" data-kg="65" onchange="calcMetrics()"> <span>2. Lavadora / Secadora</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Cocina / Horno" data-vol="0.40" data-kg="50" onchange="calcMetrics()"> <span>3. Cocina / Horno</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Cama 2 Plazas / King" data-vol="1.20" data-kg="60" onchange="calcMetrics()"> <span>4. Cama 2 Plazas / King</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Cama 1 o 1.5 Plaza" data-vol="0.75" data-kg="35" onchange="calcMetrics()"> <span>5. Cama 1 o 1.5 Plaza</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Sofá / Living (3 cuerpos)" data-vol="1.50" data-kg="70" onchange="calcMetrics()"> <span>6. Sofá / Living (3 cuerpos)</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Sillón / Poltrona" data-vol="0.60" data-kg="30" onchange="calcMetrics()"> <span>7. Sillón / Poltrona</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Comedor (Mesa + Sillas)" data-vol="1.40" data-kg="80" onchange="calcMetrics()"> <span>8. Comedor (Mesa + Sillas)</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Clóset / Ropero" data-vol="1.30" data-kg="75" onchange="calcMetrics()"> <span>9. Clóset / Ropero</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Cómoda / Veladores" data-vol="0.55" data-kg="40" onchange="calcMetrics()"> <span>10. Cómoda / Veladores</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Rack TV / Televisor" data-vol="0.45" data-kg="30" onchange="calcMetrics()"> <span>11. Rack TV / Televisor</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Escritorio / Silla Oficina" data-vol="0.65" data-kg="35" onchange="calcMetrics()"> <span>12. Escritorio / Silla Oficina</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Pack 5 Cajas Medianas" data-vol="0.50" data-kg="75" onchange="calcMetrics()"> <span>13. Pack 5 Cajas Medianas</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Pack 10 Cajas / Bolsas" data-vol="1.00" data-kg="140" onchange="calcMetrics()"> <span>14. Pack 10 Cajas / Bolsas</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Bicicleta / Máquina Ejercicio" data-vol="0.55" data-kg="25" onchange="calcMetrics()"> <span>15. Bicicleta / Máq. Ejercicio</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Parrilla / Mueble Terraza" data-vol="0.70" data-kg="40" onchange="calcMetrics()"> <span>16. Parrilla / Mueble Terraza</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Pallet Estándar (120x100)" data-vol="1.68" data-kg="450" onchange="calcMetrics()"> <span>17. Pallet Estándar (120x100)</span></label>
-          <label class="check-item"><input type="checkbox" data-name="Moto / Maquinaria Ligera" data-vol="2.10" data-kg="180" onchange="calcMetrics()"> <span>18. Moto / Maquinaria Ligera</span></label>
+        <div class="category-banner" id="categoryBanner">Mostrando: 1. Muebles y Dormitorio</div>
+        <div class="items-list" id="itemsContainer"></div>
+
+        <!-- Resumen acumulado de todas las categorías -->
+        <div class="selected-summary" id="selectedSummary">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Artículos agregados a tu carga:</strong>
+            <button type="button" id="clearAllBtn" style="background:none; border:none; color:#dc2626; font-size:11px; font-weight:700; cursor:pointer;">Limpiar todo</button>
+          </div>
+          <div class="selected-tags" id="selectedTags"></div>
         </div>
 
-        <label style="margin-top: 8px;">¿Tienes bultos con medidas específicas? (Opcional / Adicional):</label>
+        <label style="margin-top: 8px;">¿Tienes otro bulto con medidas exactas? (Opcional / Adicional):</label>
         <div class="grid-5">
           <div>
             <label>Bultos</label>
-            <input type="number" id="bultos" value="0" min="0" oninput="calcMetrics()">
+            <input type="number" id="bultos" value="0" min="0">
           </div>
           <div>
             <label>Largo cm</label>
-            <input type="number" id="largo" placeholder="0" min="0" oninput="calcMetrics()">
+            <input type="number" id="largo" placeholder="0" min="0">
           </div>
           <div>
             <label>Ancho cm</label>
-            <input type="number" id="ancho" placeholder="0" min="0" oninput="calcMetrics()">
+            <input type="number" id="ancho" placeholder="0" min="0">
           </div>
           <div>
             <label>Alto cm</label>
-            <input type="number" id="alto" placeholder="0" min="0" oninput="calcMetrics()">
+            <input type="number" id="alto" placeholder="0" min="0">
           </div>
           <div>
             <label>Peso c/u kg</label>
-            <input type="number" id="peso" placeholder="0" min="0" oninput="calcMetrics()">
+            <input type="number" id="peso" placeholder="0" min="0">
           </div>
         </div>
 
         <div class="calc-box">
-          <span>Cubicación total estimada:</span>
+          <span>Cubicación total acumulada:</span>
           <strong><span id="resVolumen">0.00</span> m³ | <span id="resPeso">0</span> kg totales</strong>
         </div>
       </div>
 
-      <!-- 3. SERVICIO Y FECHA ESTIMADA -->
+      <!-- 3. SERVICIO Y FECHAS ESTIMADAS -->
       <div class="section">
-        <div class="section-title">3. Modalidad, Fecha Estimada y Maniobra</div>
+        <div class="section-title">3. Modalidad, Fechas Estimadas y Maniobra</div>
         
         <label>Tipo de envío</label>
         <div class="radio-group">
           <label class="radio-card green">
-            <input type="radio" name="servicio" value="Consolidado Semanal (Económico)" checked onchange="updateDateHint()">
+            <input type="radio" name="servicio" value="Consolidado Semanal (Económico)" checked>
             <div class="radio-box">Consolidado Semanal<small>Tarifa económica compartida</small></div>
           </label>
           <label class="radio-card">
-            <input type="radio" name="servicio" value="Flete Exclusivo / Directo" onchange="updateDateHint()">
+            <input type="radio" name="servicio" value="Flete Exclusivo / Directo">
             <div class="radio-box">Flete Exclusivo<small>Camión directo a tu agenda</small></div>
           </label>
         </div>
 
         <div class="date-box">
-          <label for="fechaEstimada">Fecha estimada de retiro / traslado</label>
-          <input type="date" id="fechaEstimada" required>
+          <div class="grid-2">
+            <div>
+              <label for="fechaRetiro">Fecha estimada de retiro (Origen)</label>
+              <input type="date" id="fechaRetiro" required>
+            </div>
+            <div>
+              <label for="fechaRecepcion">Fecha estimada de recepción (Destino)</label>
+              <input type="date" id="fechaRecepcion" required>
+            </div>
+          </div>
           <div class="date-hint" id="dateHint">📅 Consolidado: Salidas semanales programadas (coordinamos ventana exacta según ruta).</div>
         </div>
 
@@ -264,7 +279,7 @@
   <!-- Barra fija inferior siempre visible -->
   <div class="sticky-footer">
     <div class="sticky-inner">
-      <button type="button" onclick="document.getElementById('quoteForm').requestSubmit()" class="btn-whatsapp" style="padding: 13px;">
+      <button type="button" id="stickySubmitBtn" class="btn-whatsapp" style="padding: 13px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
         Enviar Cotización por WhatsApp
       </button>
@@ -272,195 +287,375 @@
   </div>
 
   <script>
-    const WHATSAPP_NUMBER = "56999502795";
-    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzSop5iOJ0A1XovJZd84w8QR7RNWJt2dQkaQMJvjTHQ7PpXaEGQ2ZXsVXYQvCrq-J4/exec";
+    document.addEventListener('DOMContentLoaded', function() {
+      const WHATSAPP_NUMBER = "56999502795";
+      const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzSop5iOJ0A1XovJZd84w8QR7RNWJt2dQkaQMJvjTHQ7PpXaEGQ2ZXsVXYQvCrq-J4/exec";
 
-    // TODAS LAS COMUNAS POR REGIÓN
-    const COMUNAS_POR_REGION = {
-      "Región Metropolitana (RM)": [
-        "Alhué", "Buin", "Calera de Tango", "Cerrillos", "Cerro Navia", "Colina", "Conchalí",
-        "Curacaví", "El Bosque", "El Monte", "Estación Central", "Huechuraba", "Independencia",
-        "Isla de Maipo", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina",
-        "Lampa", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú",
-        "María Pinto", "Melipilla", "Ñuñoa", "Padre Hurtado", "Paine", "Pedro Aguirre Cerda",
-        "Peñaflor", "Peñalolén", "Pirque", "Providencia", "Pudahuel", "Puente Alto",
-        "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Bernardo", "San Joaquín",
-        "San José de Maipo", "San Miguel", "San Pedro", "San Ramón", "Santiago Centro",
-        "Talagante", "Tiltil", "Vitacura"
-      ],
-      "V Región de Valparaíso": [
-        "Algarrobo", "Cabildo", "Calera", "Calle Larga", "Cartagena", "Casablanca", "Catemu",
-        "Concón", "El Quisco", "El Tabo", "Hijuelas", "Isla de Pascua", "Juan Fernández",
-        "La Cruz", "La Ligua", "Limache", "Llaillay", "Los Andes", "Nogales", "Olmué",
-        "Panquehue", "Papudo", "Petorca", "Placilla / Curauma", "Puchuncaví", "Putaendo",
-        "Quillota", "Quilpué", "Quintero", "Rinconada", "San Antonio", "San Esteban",
-        "San Felipe", "Santa María", "Santo Domingo", "Valparaíso", "Villa Alemana",
-        "Viña del Mar", "Zapallar"
-      ],
-      "VI Región de O'Higgins": [
-        "Chépica", "Chimbarongo", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros",
-        "La Estrella", "Las Cabras", "Litueche", "Lolol", "Machalí", "Malloa", "Marchihue",
-        "Mostazal", "Nancagua", "Navidad", "Olivar", "Palmilla", "Paredones", "Peralillo",
-        "Peumo", "Pichidegua", "Pichilemu", "Placilla (VI)", "Pumanque", "Quinta de Tilcoco",
-        "Rancagua", "Rengo", "Requínoa", "San Fernando", "San Vicente", "Santa Cruz"
-      ],
-      "IV Región de Coquimbo": [
-        "Andacollo", "Canela", "Combarbalá", "Coquimbo", "Illapel", "La Higuera",
-        "La Serena", "Los Vilos", "Monte Patria", "Ovalle", "Paiguano", "Punitaqui",
-        "Río Hurtado", "Salamanca", "Vicuña"
-      ]
-    };
+      const CATALOGO = {
+        hogar: [
+          { id: "h1", name: "Cama Chica (1 / 1.5 Plaza)", vol: 0.75, kg: 35 },
+          { id: "h2", name: "Cama 2 Plazas", vol: 1.15, kg: 55 },
+          { id: "h3", name: "Cama King / Super King", vol: 1.45, kg: 75 },
+          { id: "h4", name: "Colchón Suelto", vol: 0.45, kg: 25 },
+          { id: "h5", name: "Sofá 1 Cuerpo / Poltrona", vol: 0.60, kg: 28 },
+          { id: "h6", name: "Sofá 2 Cuerpos", vol: 1.10, kg: 50 },
+          { id: "h7", name: "Sofá 3 Cuerpos", vol: 1.55, kg: 70 },
+          { id: "h8", name: "Sofá Seccional / En L", vol: 2.20, kg: 95 },
+          { id: "h9", name: "Comedor (Mesa + 4 a 6 Sillas)", vol: 1.40, kg: 80 },
+          { id: "h10", name: "Clóset / Ropero", vol: 1.35, kg: 75 },
+          { id: "h11", name: "Cómoda / Cajonera", vol: 0.55, kg: 40 },
+          { id: "h12", name: "Velador / Mesa Lateral", vol: 0.20, kg: 15 },
+          { id: "h13", name: "Rack TV / Mueble Sala", vol: 0.50, kg: 35 },
+          { id: "h14", name: "Escritorio + Silla Oficina", vol: 0.65, kg: 35 },
+          { id: "h15", name: "Mueble Terraza / Parrilla", vol: 0.75, kg: 45 }
+        ],
+        lineablanca: [
+          { id: "lb1", name: "Refrigerador Grande (2 puertas / Side by Side)", vol: 1.15, kg: 95 },
+          { id: "lb2", name: "Refrigerador Mediano / Estándar", vol: 0.80, kg: 65 },
+          { id: "lb3", name: "Frigobar / Congelador Horizontal", vol: 0.45, kg: 40 },
+          { id: "lb4", name: "Lavadora", vol: 0.45, kg: 65 },
+          { id: "lb5", name: "Secadora de Ropa", vol: 0.45, kg: 50 },
+          { id: "lb6", name: "Cocina a Gas / Encimera + Horno", vol: 0.45, kg: 55 },
+          { id: "lb7", name: "Lavavajillas", vol: 0.40, kg: 45 },
+          { id: "lb8", name: "Televisor LED / Smart TV (43\" a 75\")", vol: 0.25, kg: 20 },
+          { id: "lb9", name: "Microondas / Electrodoméstico menor", vol: 0.12, kg: 15 },
+          { id: "lb10", name: "Estufa a Gas / Pellet / Aire Acond.", vol: 0.35, kg: 35 }
+        ],
+        cajas: [
+          { id: "c1", name: "Caja Pequeña (Libros / Loza)", vol: 0.05, kg: 15 },
+          { id: "c2", name: "Caja Mediana Estándar", vol: 0.10, kg: 20 },
+          { id: "c3", name: "Caja Grande (Ropa / Liviana)", vol: 0.18, kg: 25 },
+          { id: "c4", name: "Maleta / Bolso Grande", vol: 0.12, kg: 22 },
+          { id: "c5", name: "Saco / Bolsa Industrial", vol: 0.15, kg: 30 },
+          { id: "c6", name: "Caja Plástica Organizadora", vol: 0.10, kg: 18 }
+        ],
+        comercial: [
+          { id: "cm1", name: "Pallet Estándar (120x100x140 cm)", vol: 1.68, kg: 450 },
+          { id: "cm2", name: "Medio Pallet / Carga Baja", vol: 0.85, kg: 250 },
+          { id: "cm3", name: "Tambor / Bidón 200 Litros", vol: 0.30, kg: 210 },
+          { id: "cm4", name: "Sacos Construcción / Cemento / Pegamento", vol: 0.04, kg: 25 },
+          { id: "cm5", name: "Planchas / Perfiles / Materiales (Pack)", vol: 0.60, kg: 180 },
+          { id: "cm6", name: "Vitrina / Mesón Comercial", vol: 1.30, kg: 90 }
+        ],
+        vehiculos: [
+          { id: "v1", name: "Bicicleta Adulto / Niño", vol: 0.45, kg: 16 },
+          { id: "v2", name: "Moto Calle / Scooter", vol: 1.80, kg: 140 },
+          { id: "v3", name: "Moto Enduro / Todo Terreno / Cuatrimoto", vol: 2.40, kg: 210 },
+          { id: "v4", name: "Máquina Ejercicio (Trotadora / Elíptica)", vol: 0.85, kg: 65 },
+          { id: "v5", name: "Generador / Compresor / Soldadora", vol: 0.55, kg: 85 },
+          { id: "v6", name: "Motor / Caja de Cambios / Repuesto Pesado", vol: 0.65, kg: 160 }
+        ]
+      };
 
-    function populateComunas() {
-      const selOrigen = document.getElementById('origen');
-      const selDestino = document.getElementById('destino');
+      const cantidades = {};
+      const itemById = {};
+      Object.values(CATALOGO).flat().forEach(item => { itemById[item.id] = item; });
 
-      selOrigen.innerHTML = '<option value="">Selecciona comuna de origen...</option>';
-      selDestino.innerHTML = '<option value="">Selecciona comuna de destino...</option>';
+      const catSelect = document.getElementById('categoriaSelect');
+      const itemsContainer = document.getElementById('itemsContainer');
+      const categoryBanner = document.getElementById('categoryBanner');
 
-      for (const [region, comunas] of Object.entries(COMUNAS_POR_REGION)) {
-        const groupO = document.createElement('optgroup');
-        groupO.label = region;
-        const groupD = document.createElement('optgroup');
-        groupD.label = region;
+      function renderCategoryItems() {
+        const cat = catSelect.value;
+        const catText = catSelect.options[catSelect.selectedIndex].text;
+        categoryBanner.textContent = "Rubro activo: " + catText;
 
-        comunas.forEach(comuna => {
-          const val = `${comuna} (${region.split(' ')[0]})`;
-          const optO = new Option(comuna, val);
-          const optD = new Option(comuna, val);
-          groupO.appendChild(optO);
-          groupD.appendChild(optD);
+        const items = CATALOGO[cat] || [];
+        itemsContainer.innerHTML = "";
+
+        items.forEach((item, idx) => {
+          const qty = cantidades[item.id] || 0;
+          const row = document.createElement('div');
+          row.className = "item-row" + (qty > 0 ? " active" : "");
+          row.id = "row-" + item.id;
+
+          row.innerHTML = `
+            <div class="item-info">
+              <div class="item-name">${idx + 1}. ${item.name}</div>
+              <div class="item-specs">Ref: ${item.vol.toFixed(2)} m³ • ${item.kg} kg c/u</div>
+            </div>
+            <div class="qty-controls">
+              <button type="button" class="qty-btn minus" data-id="${item.id}">−</button>
+              <span class="qty-val" id="qty-${item.id}">${qty}</span>
+              <button type="button" class="qty-btn plus" data-id="${item.id}">+</button>
+            </div>
+          `;
+          itemsContainer.appendChild(row);
         });
-
-        selOrigen.appendChild(groupO);
-        selDestino.appendChild(groupD);
       }
-    }
 
-    function updateDateHint() {
-      const servicio = document.querySelector('input[name="servicio"]:checked').value;
-      const hint = document.getElementById('dateHint');
-      if (servicio.includes("Consolidado")) {
-        hint.textContent = "📅 Consolidado: Salidas semanales programadas (coordinamos ventana exacta según ruta).";
-        hint.style.color = "#047857";
-      } else {
-        hint.textContent = "⚡ Exclusivo: Camión dedicado directo en la fecha solicitada.";
-        hint.style.color = "#0f172a";
-      }
-    }
-
-    function calcMetrics() {
-      let volItems = 0;
-      let kgItems = 0;
-      const seleccionados = [];
-
-      document.querySelectorAll('#itemsChecklist input[type="checkbox"]:checked').forEach(cb => {
-        volItems += parseFloat(cb.dataset.vol) || 0;
-        kgItems += parseFloat(cb.dataset.kg) || 0;
-        seleccionados.push(cb.dataset.name);
+      // Delegación de eventos para botones + y - (100% compatible con todos los navegadores)
+      itemsContainer.addEventListener('click', function(e) {
+        const btn = e.target.closest('.qty-btn');
+        if (!btn) return;
+        const id = btn.getAttribute('data-id');
+        const delta = btn.classList.contains('plus') ? 1 : -1;
+        changeQty(id, delta);
       });
 
-      const bultos = parseFloat(document.getElementById('bultos').value) || 0;
-      const largo = parseFloat(document.getElementById('largo').value) || 0;
-      const ancho = parseFloat(document.getElementById('ancho').value) || 0;
-      const alto = parseFloat(document.getElementById('alto').value) || 0;
-      const peso = parseFloat(document.getElementById('peso').value) || 0;
+      catSelect.addEventListener('change', renderCategoryItems);
 
-      const volManual = (bultos * largo * ancho * alto) / 1000000;
-      const kgManual = bultos * peso;
+      function changeQty(id, delta) {
+        const current = cantidades[id] || 0;
+        const next = Math.max(0, current + delta);
+        if (next === 0) {
+          delete cantidades[id];
+        } else {
+          cantidades[id] = next;
+        }
 
-      const volTotal = volItems + volManual;
-      const pesoTotal = kgItems + kgManual;
-
-      document.getElementById('resVolumen').textContent = volTotal.toFixed(2);
-      document.getElementById('resPeso').textContent = pesoTotal.toFixed(0);
-
-      return {
-        volTotal: volTotal.toFixed(2),
-        pesoTotal: pesoTotal.toFixed(0),
-        seleccionados,
-        bultosManual: bultos,
-        dimManual: bultos > 0 ? `${bultos} bulto(s) de ${largo}x${ancho}x${alto}cm` : ""
-      };
-    }
-
-    // Inicializar comunas y fecha mínima hoy
-    populateComunas();
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('fechaEstimada').min = today;
-    document.getElementById('fechaEstimada').value = today;
-
-    document.getElementById('quoteForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const origen = document.getElementById('origen').value;
-      const destino = document.getElementById('destino').value;
-      if (origen === destino) {
-        alert("La comuna de origen y destino no pueden ser iguales.");
-        return;
+        const qtyEl = document.getElementById('qty-' + id);
+        const rowEl = document.getElementById('row-' + id);
+        if (qtyEl) qtyEl.textContent = next;
+        if (rowEl) {
+          rowEl.classList.toggle('active', next > 0);
+        }
+        calcMetrics();
       }
 
-      const metrics = calcMetrics();
-      if (parseFloat(metrics.volTotal) === 0 && parseFloat(metrics.pesoTotal) === 0) {
-        alert("Por favor marca al menos un artículo de la lista o ingresa las medidas de un bulto.");
-        return;
-      }
+      document.getElementById('clearAllBtn').addEventListener('click', function() {
+        for (const k in cantidades) delete cantidades[k];
+        renderCategoryItems();
+        calcMetrics();
+      });
 
-      const idSolicitud = "SOL-" + Math.floor(1000 + Math.random() * 9000);
-      const entrega = document.querySelector('input[name="entrega"]:checked').value;
-      const servicio = document.querySelector('input[name="servicio"]:checked').value;
-      const fechaEst = document.getElementById('fechaEstimada').value;
-      const tipoCarga = document.getElementById('tipoCarga').value;
-      const maniobra = document.getElementById('maniobra').value;
-      const valorDeclarado = parseInt(document.getElementById('valorDeclarado').value || 0).toLocaleString('es-CL');
-      const documento = document.getElementById('documento').value;
+      document.getElementById('selectedTags').addEventListener('click', function(e) {
+        const rem = e.target.closest('.tag-remove');
+        if (!rem) return;
+        const id = rem.getAttribute('data-id');
+        delete cantidades[id];
+        renderCategoryItems();
+        calcMetrics();
+      });
 
-      const detalleItems = [
-        metrics.seleccionados.length > 0 ? `Artículos: ${metrics.seleccionados.join(", ")}` : "",
-        metrics.dimManual ? `Adicional: ${metrics.dimManual}` : ""
-      ].filter(Boolean).join(" | ");
-
-      const totalBultos = metrics.seleccionados.length + parseInt(metrics.bultosManual || 0);
-
-      const payload = {
-        id: idSolicitud,
-        origen,
-        destino,
-        entrega,
-        servicio: `${servicio} (Fecha: ${fechaEst})`,
-        tipoCarga,
-        bultos: totalBultos,
-        dimensiones: detalleItems,
-        volumen: metrics.volTotal,
-        pesoTotal: metrics.pesoTotal,
-        maniobra,
-        docSeguro: `${documento} | Seguro: $${valorDeclarado}`
+      // COMUNAS POR REGIÓN
+      const COMUNAS_POR_REGION = {
+        "Región Metropolitana (RM)": [
+          "Alhué", "Buin", "Calera de Tango", "Cerrillos", "Cerro Navia", "Colina", "Conchalí",
+          "Curacaví", "El Bosque", "El Monte", "Estación Central", "Huechuraba", "Independencia",
+          "Isla de Maipo", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina",
+          "Lampa", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú",
+          "María Pinto", "Melipilla", "Ñuñoa", "Padre Hurtado", "Paine", "Pedro Aguirre Cerda",
+          "Peñaflor", "Peñalolén", "Pirque", "Providencia", "Pudahuel", "Puente Alto",
+          "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Bernardo", "San Joaquín",
+          "San José de Maipo", "San Miguel", "San Pedro", "San Ramón", "Santiago Centro",
+          "Talagante", "Tiltil", "Vitacura"
+        ],
+        "V Región de Valparaíso": [
+          "Algarrobo", "Cabildo", "Calera", "Calle Larga", "Cartagena", "Casablanca", "Catemu",
+          "Concón", "El Quisco", "El Tabo", "Hijuelas", "Isla de Pascua", "Juan Fernández",
+          "La Cruz", "La Ligua", "Limache", "Llaillay", "Los Andes", "Nogales", "Olmué",
+          "Panquehue", "Papudo", "Petorca", "Placilla / Curauma", "Puchuncaví", "Putaendo",
+          "Quillota", "Quilpué", "Quintero", "Rinconada", "San Antonio", "San Esteban",
+          "San Felipe", "Santa María", "Santo Domingo", "Valparaíso", "Villa Alemana",
+          "Viña del Mar", "Zapallar"
+        ],
+        "VI Región de O'Higgins": [
+          "Chépica", "Chimbarongo", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros",
+          "La Estrella", "Las Cabras", "Litueche", "Lolol", "Machalí", "Malloa", "Marchihue",
+          "Mostazal", "Nancagua", "Navidad", "Olivar", "Palmilla", "Paredones", "Peralillo",
+          "Peumo", "Pichidegua", "Pichilemu", "Placilla (VI)", "Pumanque", "Quinta de Tilcoco",
+          "Rancagua", "Rengo", "Requínoa", "San Fernando", "San Vicente", "Santa Cruz"
+        ],
+        "IV Región de Coquimbo": [
+          "Andacollo", "Canela", "Combarbalá", "Coquimbo", "Illapel", "La Higuera",
+          "La Serena", "Los Vilos", "Monte Patria", "Ovalle", "Paiguano", "Punitaqui",
+          "Río Hurtado", "Salamanca", "Vicuña"
+        ]
       };
 
-      // Envío silencioso a Google Sheets
-      fetch(GOOGLE_SHEETS_URL, {
-        method: "POST",
-        mode: "no-cors",
-        keepalive: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).catch(err => console.error(err));
+      function populateComunas() {
+        const selOrigen = document.getElementById('origen');
+        const selDestino = document.getElementById('destino');
 
-      const mensaje = `Hola, solicito cotización de flete (*#${idSolicitud}*):
+        selOrigen.innerHTML = '<option value="">Selecciona comuna de origen...</option>';
+        selDestino.innerHTML = '<option value="">Selecciona comuna de destino...</option>';
+
+        for (const [region, comunas] of Object.entries(COMUNAS_POR_REGION)) {
+          const groupO = document.createElement('optgroup');
+          groupO.label = region;
+          const groupD = document.createElement('optgroup');
+          groupD.label = region;
+
+          comunas.forEach(comuna => {
+            const val = `${comuna} (${region.split(' ')[0]})`;
+            groupO.appendChild(new Option(comuna, val));
+            groupD.appendChild(new Option(comuna, val));
+          });
+
+          selOrigen.appendChild(groupO);
+          selDestino.appendChild(groupD);
+        }
+      }
+
+      document.querySelectorAll('input[name="servicio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const hint = document.getElementById('dateHint');
+          if (this.value.includes("Consolidado")) {
+            hint.textContent = "📅 Consolidado: Salidas semanales programadas (coordinamos ventana exacta según ruta).";
+            hint.style.color = "#047857";
+          } else {
+            hint.textContent = "⚡ Exclusivo: Camión dedicado directo en las fechas solicitadas.";
+            hint.style.color = "#0f172a";
+          }
+        });
+      });
+
+      ['bultos', 'largo', 'ancho', 'alto', 'peso'].forEach(id => {
+        document.getElementById(id).addEventListener('input', calcMetrics);
+      });
+
+      function calcMetrics() {
+        let volItems = 0;
+        let kgItems = 0;
+        let totalUnidades = 0;
+        const listaTexto = [];
+        const tagsHtml = [];
+
+        for (const [id, qty] of Object.entries(cantidades)) {
+          const item = itemById[id];
+          if (item && qty > 0) {
+            volItems += item.vol * qty;
+            kgItems += item.kg * qty;
+            totalUnidades += qty;
+            listaTexto.push(`${qty}x ${item.name}`);
+            tagsHtml.push(`<span class="tag-item">${qty}x ${item.name} <span class="tag-remove" data-id="${id}">×</span></span>`);
+          }
+        }
+
+        const summaryBox = document.getElementById('selectedSummary');
+        const tagsContainer = document.getElementById('selectedTags');
+        if (listaTexto.length > 0) {
+          summaryBox.classList.add('visible');
+          tagsContainer.innerHTML = tagsHtml.join('');
+        } else {
+          summaryBox.classList.remove('visible');
+          tagsContainer.innerHTML = '';
+        }
+
+        const bultos = parseFloat(document.getElementById('bultos').value) || 0;
+        const largo = parseFloat(document.getElementById('largo').value) || 0;
+        const ancho = parseFloat(document.getElementById('ancho').value) || 0;
+        const alto = parseFloat(document.getElementById('alto').value) || 0;
+        const peso = parseFloat(document.getElementById('peso').value) || 0;
+
+        const volManual = (bultos * largo * ancho * alto) / 1000000;
+        const kgManual = bultos * peso;
+
+        const volTotal = volItems + volManual;
+        const pesoTotal = kgItems + kgManual;
+
+        document.getElementById('resVolumen').textContent = volTotal.toFixed(2);
+        document.getElementById('resPeso').textContent = pesoTotal.toFixed(0);
+
+        return {
+          volTotal: volTotal.toFixed(2),
+          pesoTotal: pesoTotal.toFixed(0),
+          totalUnidades: totalUnidades + bultos,
+          listaTexto,
+          dimManual: bultos > 0 ? `${bultos} bulto(s) de ${largo}x${ancho}x${alto}cm` : ""
+        };
+      }
+
+      // Inicializar fechas (hoy y mañana por defecto)
+      const fechaRetiroInput = document.getElementById('fechaRetiro');
+      const fechaRecepcionInput = document.getElementById('fechaRecepcion');
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const todayStr = today.toISOString().split('T')[0];
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+      fechaRetiroInput.min = todayStr;
+      fechaRetiroInput.value = todayStr;
+      fechaRecepcionInput.min = todayStr;
+      fechaRecepcionInput.value = tomorrowStr;
+
+      fechaRetiroInput.addEventListener('change', function() {
+        fechaRecepcionInput.min = this.value;
+        if (fechaRecepcionInput.value < this.value) {
+          fechaRecepcionInput.value = this.value;
+        }
+      });
+
+      populateComunas();
+      renderCategoryItems();
+
+      document.getElementById('stickySubmitBtn').addEventListener('click', function() {
+        document.getElementById('quoteForm').requestSubmit();
+      });
+
+      document.getElementById('quoteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const origen = document.getElementById('origen').value;
+        const destino = document.getElementById('destino').value;
+        if (origen === destino) {
+          alert("La comuna de origen y destino no pueden ser iguales.");
+          return;
+        }
+
+        const metrics = calcMetrics();
+        if (parseFloat(metrics.volTotal) === 0 && parseFloat(metrics.pesoTotal) === 0) {
+          alert("Agrega al menos 1 artículo con el botón (+) o ingresa las medidas de un bulto.");
+          return;
+        }
+
+        const idSolicitud = "SOL-" + Math.floor(1000 + Math.random() * 9000);
+        const entrega = document.querySelector('input[name="entrega"]:checked').value;
+        const servicio = document.querySelector('input[name="servicio"]:checked').value;
+        const fechaRetiro = fechaRetiroInput.value;
+        const fechaRecepcion = fechaRecepcionInput.value;
+        const categoriaPrincipal = catSelect.options[catSelect.selectedIndex].text;
+        const maniobra = document.getElementById('maniobra').value;
+        const valorDeclarado = parseInt(document.getElementById('valorDeclarado').value || 0).toLocaleString('es-CL');
+        const documento = document.getElementById('documento').value;
+
+        const detalleItems = [
+          metrics.listaTexto.length > 0 ? metrics.listaTexto.join(", ") : "",
+          metrics.dimManual ? `Adicional: ${metrics.dimManual}` : ""
+        ].filter(Boolean).join(" | ");
+
+        const payload = {
+          id: idSolicitud,
+          origen,
+          destino,
+          entrega,
+          servicio: `${servicio} | Retiro: ${fechaRetiro} / Recepción: ${fechaRecepcion}`,
+          tipoCarga: categoriaPrincipal,
+          bultos: metrics.totalUnidades,
+          dimensiones: detalleItems,
+          volumen: metrics.volTotal,
+          pesoTotal: metrics.pesoTotal,
+          maniobra,
+          docSeguro: `${documento} | Seguro: $${valorDeclarado}`
+        };
+
+        fetch(GOOGLE_SHEETS_URL, {
+          method: "POST",
+          mode: "no-cors",
+          keepalive: true,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error(err));
+
+        const mensaje = `Hola, solicito cotización de flete (*#${idSolicitud}*):
 
 📍 *RUTA:* ${origen} ➔ ${destino}
 🚚 *MODALIDAD:* ${entrega} | ${servicio}
-📅 *FECHA ESTIMADA:* ${fechaEst}
-📦 *CATEGORÍA:* ${tipoCarga}
-🛋️ *DETALLE CARGA:* ${detalleItems}
-📐 *CUBICACIÓN TOTAL:* *${metrics.volTotal} m³* | *${metrics.pesoTotal} kg*
+📅 *FECHA EST. RETIRO:* ${fechaRetiro}
+🏁 *FECHA EST. RECEPCIÓN:* ${fechaRecepcion}
+📦 *INVENTARIO:* ${detalleItems}
+📐 *CUBICACIÓN TOTAL:* *${metrics.volTotal} m³* | *${metrics.pesoTotal} kg* (${metrics.totalUnidades} unid.)
 🏗️ *MANIOBRA:* ${maniobra}
 🛡️ *RESPALDO:* Valor declarado $${valorDeclarado} | ${documento}
 
-¿Cuál sería el valor del traslado y disponibilidad para esa fecha?`;
+¿Cuál sería el valor del traslado y disponibilidad para esas fechas?`;
 
-      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
-      window.location.href = whatsappUrl;
+        const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
+        window.location.href = whatsappUrl;
+      });
     });
   </script>
 </body>
