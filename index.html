@@ -30,8 +30,9 @@
     }
 
     label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #334155; }
-    select, input[type="number"], input[type="date"], input[type="tel"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff; color: #0f172a; }
-    select:focus, input:focus { outline: none; border-color: #0f172a; }
+    select, input[type="number"], input[type="date"], input[type="tel"], textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff; color: #0f172a; }
+    select:focus, input:focus, textarea:focus { outline: none; border-color: #0f172a; }
+    textarea { resize: vertical; min-height: 82px; }
 
     /* Phone Input Group */
     .phone-wrap { display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #fff; }
@@ -219,6 +220,12 @@
         <div class="calc-box">
           <span>Cubicación total acumulada:</span>
           <strong><span id="resVolumen">0.00</span> m³ | <span id="resPeso">0</span> kg totales</strong>
+        </div>
+
+        <!-- NUEVO CAMPO: DETALLE MANUAL DEL CLIENTE -->
+        <div style="margin-top: 14px;">
+          <label for="detalleManual">Detalle o necesidad adicional (Opcional):</label>
+          <textarea id="detalleManual" placeholder="Escribe aquí si necesitas detallar tu carga, accesos (ej: piso con/sin ascensor), horarios preferidos o cualquier requerimiento especial..."></textarea>
         </div>
       </div>
 
@@ -629,8 +636,10 @@
         }
 
         const metrics = calcMetrics();
-        if (parseFloat(metrics.volTotal) === 0 && parseFloat(metrics.pesoTotal) === 0) {
-          alert("Agrega al menos 1 artículo con el botón (+) o ingresa las medidas de un bulto.");
+        const detalleManualTexto = document.getElementById('detalleManual').value.trim();
+
+        if (parseFloat(metrics.volTotal) === 0 && parseFloat(metrics.pesoTotal) === 0 && detalleManualTexto === "") {
+          alert("Agrega al menos 1 artículo, ingresa las medidas de un bulto o redacta tu necesidad en el detalle.");
           return;
         }
 
@@ -653,13 +662,17 @@
           lineasInventario.push(metrics.dimManual);
         }
 
-        const inventarioEnumeradoWhatsApp = lineasInventario
-          .map((linea, index) => `${index + 1}. ${linea}`)
-          .join("\n");
+        const inventarioEnumeradoWhatsApp = lineasInventario.length > 0
+          ? lineasInventario.map((linea, index) => `${index + 1}. ${linea}`).join("\n")
+          : "Sin artículos de catálogo seleccionados (ver detalle manual)";
 
-        const inventarioEnumeradoSheets = lineasInventario
-          .map((linea, index) => `${index + 1}. ${linea}`)
-          .join(" | ");
+        let inventarioEnumeradoSheets = lineasInventario.length > 0
+          ? lineasInventario.map((linea, index) => `${index + 1}. ${linea}`).join(" | ")
+          : "Solo detalle manual";
+
+        if (detalleManualTexto !== "") {
+          inventarioEnumeradoSheets += ` | Nota cliente: ${detalleManualTexto}`;
+        }
 
         const payload = {
           telefono: telefonoCompleto,
@@ -676,7 +689,6 @@
           docSeguro: `${documento} | Seguro: $${valorDeclarado}`
         };
 
-        // Obtener el ID correlativo real desde Google Sheets (sin mode: no-cors para leer la respuesta)
         let idCorrelativo = "SOL-" + Math.floor(1000 + Math.random() * 9000);
         try {
           const response = await fetch(GOOGLE_SHEETS_URL, {
@@ -692,6 +704,10 @@
           console.error("Error obteniendo correlativo:", err);
         }
 
+        const seccionNotaWhatsApp = detalleManualTexto !== ""
+          ? `\n📝 *DETALLE / NECESIDAD DEL CLIENTE:*\n${detalleManualTexto}\n`
+          : "";
+
         const mensaje = `Hola, solicito cotización de flete (*#${idCorrelativo}*):
 
 📱 *TELÉFONO CLIENTE:* ${telefonoCompleto}
@@ -702,7 +718,7 @@
 
 📦 *INVENTARIO ENUMERADO:*
 ${inventarioEnumeradoWhatsApp}
-
+${seccionNotaWhatsApp}
 📐 *CUBICACIÓN TOTAL:* *${metrics.volTotal} m³* | *${metrics.pesoTotal} kg* (${metrics.totalUnidades} unid.)
 🏗️ *MANIOBRA:* ${maniobra}
 🛡️ *RESPALDO:* Valor declarado $${valorDeclarado} | ${documento}
